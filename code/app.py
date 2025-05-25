@@ -49,7 +49,7 @@ async def run_crawler_in_background(crawlerId: int, metadata: dict):
             async with aiohttp.ClientSession() as session:
                 try:
                     async with session.post(
-                        "http://glue-dev:8010/run-etl-jobs"
+                        "http://54.172.208.188:8010/run-etl-jobs"
                     ) as response:
                         if response.status == 200:
                             api_result = await response.json()
