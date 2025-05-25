@@ -8,7 +8,7 @@ services:
     user: pwuser
     volumes:
       - ./code:/home/pwuser/app
-      - /home/ec2-user/.aws:/home/pwuser/.aws
+      - ~/.aws:/home/pwuser/.aws
     working_dir: /home/pwuser/app
     command: python app.py
     restart: always

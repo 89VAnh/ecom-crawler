@@ -32,11 +32,11 @@ class CrawlerConfig(BaseModel):
 
 async def run_crawler_in_background(crawlerId: int, metadata: dict):
     pool = await asyncpg.create_pool(
-        host="postgres_db",
+        host="ecom.cataw28sor1c.us-east-1.rds.amazonaws.com",
         port="5432",
         database="ecom",
-        user="user",
-        password="password",
+        user="vietanh21",
+        password="vietanh21",
     )
 
     try:
