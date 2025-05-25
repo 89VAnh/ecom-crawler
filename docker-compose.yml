@@ -10,7 +10,7 @@ services:
       - ./code:/home/pwuser/app
       - /home/vietanh21/.aws:/home/pwuser/.aws
     working_dir: /home/pwuser/app
-    command: /bin/bash
+    command: python app.py
     restart: always
 volumes:
   postgres_data:
