@@ -1,0 +1,16 @@
+services:
+  playwright:
+    build: ./
+    container_name: playwright-python
+    stdin_open: true
+    tty: true
+    ipc: host
+    user: pwuser
+    volumes:
+      - ./code:/home/pwuser/app
+      - /home/vietanh21/.aws:/home/pwuser/.aws
+    working_dir: /home/pwuser/app
+    command: /bin/bash
+    restart: always
+volumes:
+  postgres_data:
