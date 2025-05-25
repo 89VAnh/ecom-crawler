@@ -1,0 +1,18 @@
+[
+    {
+        "name": "shopee",
+        "params": {
+            "link": "https://shopee.vn/search?keyword=m%C3%A0n%20h%C3%ACnh%20atas",
+            "delay": 5
+        }
+    },
+    {
+        "name": "get_table",
+        "params": {
+            "tbl_name": "stock",
+            "header": "thead tr th:not([class]), th.text-center",
+            "row": "table.table tbody tr",
+            "cell": "td"
+        }
+    }
+]

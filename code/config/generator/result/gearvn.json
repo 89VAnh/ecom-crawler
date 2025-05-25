@@ -1,0 +1,88 @@
+{
+    "engine": "playwright-crawler",
+    "pipeline": [
+        {
+            "name": "foreach",
+            "params": {
+                "start": 1,
+                "limit": 2,
+                "delay": 5,
+                "cond": {
+                    "action": "get",
+                    "validate": "len(results)>0"
+                },
+                "actions": [
+                    {
+                        "name": "get",
+                        "params": {
+                            "base_url": "https://gearvn.com",
+                            "keywords": [
+                                "laptop acer",
+                                "laptop dell",
+                                "laptop asus",
+                                "laptop hp",
+                                "laptop lenovo"
+                            ],
+                            "search": {
+                                "btn_selector": "#btn-search",
+                                "input_selector": "input#inputSearchAuto"
+                            },
+                            "product_selector": "div.search-list-results>div",
+                            "fields": {
+                                "title": {
+                                    "selector": ".product-name h1",
+                                    "attr": "text"
+                                },
+                                "price": {
+                                    "selector": "span.pro-price",
+                                    "attr": "text"
+                                },
+                                "link": {
+                                    "selector": "a",
+                                    "attr": "href"
+                                },
+                                "img": {
+                                    "selector": "img.img-default",
+                                    "attr": "src"
+                                },
+                                "rating_score": {
+                                    "selector": ".product-rating span.number",
+                                    "attr": "text"
+                                },
+                                "reviews_number": {
+                                    "selector": "#product-review-container .text-gray-500.text-sm",
+                                    "attr": "text"
+                                }
+                            }
+                        }
+                    },
+                    {
+                        "name": "transform",
+                        "params": {
+                            "actions": {
+                                "platform_id": 2,
+                                "price": "df['price'].fillna('').str.replace('.', '', regex=False).str.replace('₫', '', regex=False).replace('', '0').astype(int)",
+                                "reviews_number": "df['reviews_number'].fillna('').replace('', '0').str.extract(r'(\\d+)').fillna(0).astype(int)",
+                                "img": "df['img'].fillna('').apply(lambda x: 'https:' + x if x.startswith('//') else x)",
+                                "rating_score": "df['rating_score'].fillna(0).replace('', 0).astype(float)"
+                            },
+                            "script": "df.loc[df['reviews_number'] == 0, 'rating_score'] = 0"
+                        }
+                    },
+                    {
+                        "name": "save",
+                        "params": {
+                            "type": "s3",
+                            "bucket": "vietanh21-ecom-raw-zone",
+                            "key": "results/partition_date=YYYYMMDD/nowtimestamp.json",
+                            "pattern": {
+                                "YYYYMMDD": "#get_time_now@%Y%m%d",
+                                "nowtimestamp": "#get_time_now@%Y%m%d%H%M%S"
+                            }
+                        }
+                    }
+                ]
+            }
+        }
+    ]
+}

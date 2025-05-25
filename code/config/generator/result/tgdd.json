@@ -1,0 +1,92 @@
+{
+    "engine": "playwright-crawler",
+    "pipeline": [
+        {
+            "name": "foreach",
+            "params": {
+                "start": 1,
+                "limit": 2,
+                "delay": 5,
+                "cond": {
+                    "action": "get",
+                    "validate": "len(results)>0"
+                },
+                "actions": [
+                    {
+                        "name": "get",
+                        "params": {
+                            "base_url": "https://www.thegioididong.com",
+                            "keywords": [
+                                "laptop acer",
+                                "laptop dell",
+                                "laptop asus",
+                                "laptop hp",
+                                "laptop lenovo"
+                            ],
+                            "search": {
+                                "form_selector": "form.header__search",
+                                "input_selector": "#skw"
+                            },
+                            "product_selector": "ul.listproduct > li",
+                            "fields": {
+                                "title": {
+                                    "selector": ".product-name h1",
+                                    "attr": "text"
+                                },
+                                "price": {
+                                    "selector": ".box-price-present, .bs_price strong",
+                                    "attr": "text"
+                                },
+                                "link": {
+                                    "selector": "a",
+                                    "attr": "href"
+                                },
+                                "img": {
+                                    "selector": ".item-img img",
+                                    "attr": "data-src"
+                                },
+                                "rating_score": {
+                                    "selector": "text.point-average-score",
+                                    "attr": "text"
+                                },
+                                "reviews_number": {
+                                    "selector": "span.point-alltimerate",
+                                    "attr": "text"
+                                },
+                                "purchase_count": {
+                                    "selector": "p.point-satisfied",
+                                    "attr": "text"
+                                }
+                            }
+                        }
+                    },
+                    {
+                        "name": "transform",
+                        "params": {
+                            "actions": {
+                                "platform_id": 1,
+                                "price": "df['price'].fillna('').replace('', '0').str.replace(r'[^\\d]', '', regex=True).astype(int)",
+                                "rating_score": "df['rating_score'].fillna(0).replace('', 0).astype(float)",
+                                "reviews_number": "df['reviews_number'].fillna('').replace('', '0').str.extract(r'(\\d+)').fillna(0).astype(int)",
+                                "purchase_count": "df['purchase_count'].fillna('').replace('', '0').str.extract(r'(\\d{1,3}(?:[,.]\\d{1,3})?)(k)?').apply(lambda x: (float(x[0].replace(',', '.')) * 1000 if x[1] == 'k' else (x[0])), axis=1).astype(int)"
+                            },
+                            "script": "df.loc[df['reviews_number'] == 0, 'rating_score'] = 0"
+                        }
+                    },
+                    {
+                        "name": "save",
+                        "params": {
+                            "type": "s3",
+                            "bucket": "vietanh21-ecom-raw-zone",
+                            "key": "results/partition_date=YYYYMMDD/nowtimestamp.json",
+                            "pattern": {
+                                "YYYYMMDD": "#get_time_now@%Y%m%d",
+                                "nowtimestamp": "#get_time_now@%Y%m%d%H%M%S"
+                            }
+                        }
+                    }
+                ]
+            }
+        }
+    ]
+}

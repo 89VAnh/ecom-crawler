@@ -1,0 +1,10 @@
+{
+    "format": "excel",
+    "sheet": "Sheet1",
+    "path": "./config/generator/gendata/ticker_VNI_HNX.xlsx",
+    "mapping": {
+        "Ticker": "{Ticker}"
+    },
+    "template": "./config/generator/template/cafef.json",
+    "output": "./config/generator/result/{Ticker}.json"
+}

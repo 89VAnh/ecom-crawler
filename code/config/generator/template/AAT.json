@@ -1,0 +1,126 @@
+{
+    "engine": "request-crawler",
+    "pipeline": [
+        {
+            "name": "foreach",
+            "params": {
+                "start": 1,
+                "limit": 5000,
+                "delay": 1,
+                "cond": {
+                    "action": "get",
+                    "validate": "len(result['Data']['Data'])==0 and kwagrs.get('id')=='01'"
+                },
+                "actions": [
+                    {
+                        "name": "get",
+                        "params": {
+                            "id": "01",
+                            "url": "https://cafef.vn/du-lieu/Ajax/PageNew/DataHistory/PriceHistory.ashx",
+                            "params": {
+                                "Symbol": "AAT",
+                                "StartDate": "01/01/2024",
+                                "EndDate": "01/01/2025",
+                                "PageIndex": "$item",
+                                "PageSize": 20
+                            },
+                            "format": "json"
+                        }
+                    },
+                    {
+                        "name": "save",
+                        "params": {
+                            "type": "memory",
+                            "name": "price"
+                        }
+                    },
+                    {
+                        "name": "get",
+                        "params": {
+                            "url": "https://cafef.vn/du-lieu/Ajax/PageNew/DataHistory/ThongKeDL.ashx",
+                            "params": {
+                                "Symbol": "AAT",
+                                "StartDate": "01/01/2024",
+                                "EndDate": "01/01/2025",
+                                "PageIndex": "$item",
+                                "PageSize": 20
+                            },
+                            "format": "json"
+                        }
+                    },
+                    {
+                        "name": "save",
+                        "params": {
+                            "type": "memory",
+                            "name": "statistic"
+                        }
+                    },
+                    {
+                        "name": "get",
+                        "params": {
+                            "url": "https://cafef.vn/du-lieu/Ajax/PageNew/DataHistory/GDKhoiNgoai.ashx",
+                            "params": {
+                                "Symbol": "AAT",
+                                "StartDate": "01/01/2024",
+                                "EndDate": "01/01/2025",
+                                "PageIndex": "$item",
+                                "PageSize": 20
+                            },
+                            "format": "json"
+                        }
+                    },
+                    {
+                        "name": "save",
+                        "params": {
+                            "type": "memory",
+                            "name": "khoingoai"
+                        }
+                    },
+                    {
+                        "name": "get",
+                        "params": {
+                            "url": "https://cafef.vn/du-lieu/Ajax/PageNew/DataHistory/GDTuDoanh.ashx",
+                            "params": {
+                                "Symbol": "AAT",
+                                "StartDate": "01/01/2024",
+                                "EndDate": "01/01/2025",
+                                "PageIndex": "$item",
+                                "PageSize": 20
+                            },
+                            "format": "json"
+                        }
+                    },
+                    {
+                        "name": "save",
+                        "params": {
+                            "type": "memory",
+                            "name": "tudoanh"
+                        }
+                    },
+                    {
+                        "name": "transform",
+                        "params": {
+                            "path": "./transform/join.py"
+                        }
+                    },
+                    {
+                        "name": "save",
+                        "params": {
+                            "type": "file",
+                            "write_mode": "w",
+                            "file_name": "AAT/AAT_YYYMMDD.json",
+                            "pattern": "YYYMMDD",
+                            "pattern_val": "#get_time_now@%Y%m%d%H%M%S"
+                        }
+                    },
+                    {
+                        "name": "clear_sink",
+                        "params": {
+                            "type": "memory"
+                        }
+                    }
+                ]
+            }
+        }
+    ]
+}

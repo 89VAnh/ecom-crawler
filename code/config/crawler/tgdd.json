@@ -1,0 +1,39 @@
+{
+    "engine": "request-crawler",
+    "pipeline": [
+        {
+            "name": "foreach",
+            "params": {
+                "start": 1,
+                "limit": 2,
+                "delay": 5,
+                "cond": {
+                    "action": "get",
+                    "validate": "len(result[\"Data\"][\"Data\"])==0"
+                },
+                "actions": [
+                    {
+                        "name": "get",
+                        "params": {
+                            "url": "https://www.thegioididong.com/laptop-acer",
+                            "params": {
+                                "key": "laptop acer"
+                            },
+                            "format": "json"
+                        }
+                    },
+                    {
+                        "name": "save",
+                        "params": {
+                            "type": "s3",
+                            "bucket": "vietanh21-ecom-raw-zone",
+                            "key": "TGDD/TGDD_YYYMMDD.json",
+                            "pattern": "YYYMMDD",
+                            "pattern_val": "#get_time_now@%Y%m%d%H%M%S"
+                        }
+                    }
+                ]
+            }
+        }
+    ]
+}
