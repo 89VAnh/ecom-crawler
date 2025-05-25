@@ -172,6 +172,21 @@ async def stop_crawler(crawlerId: int):
         )
 
 
+@app.get("/status")
+async def get_status():
+    try:
+        status = {
+            "running_crawlers": [
+                {"crawlerId": crawlerId, "status": task.get_name()}
+                for crawlerId, task in crawler_tasks.items()
+            ]
+        }
+        return status
+    except Exception as e:
+        logger.error(f"Failed to retrieve status: {str(e)}", exc_info=True)
+        raise HTTPException(status_code=500, detail="Failed to retrieve status")
+
+
 if __name__ == "__main__":
     config = uvicorn.Config("app:app", host="0.0.0.0", port=5000, log_level="info")
     server = uvicorn.Server(config)
