@@ -39,6 +39,8 @@ async def run_crawler_in_background(crawlerId: int, metadata: dict):
         password="vietanh21",
     )
 
+    process_api_endpoint = "http://54.90.84.111:8010"
+
     try:
         if metadata["engine"] == "playwright-crawler":
             crawler = Crawler(metadata["pipeline"])
@@ -49,7 +51,7 @@ async def run_crawler_in_background(crawlerId: int, metadata: dict):
             async with aiohttp.ClientSession() as session:
                 try:
                     async with session.post(
-                        "http://54.172.208.188:8010/run-etl-jobs"
+                        f"{process_api_endpoint}/run-etl-jobs"
                     ) as response:
                         if response.status == 200:
                             api_result = await response.json()
