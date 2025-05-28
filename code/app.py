@@ -1,7 +1,10 @@
 import asyncio
 import logging
+import os
 import time
 from typing import Dict
+
+from dotenv import load_dotenv
 import aiohttp
 from fastapi import BackgroundTasks, FastAPI, HTTPException
 from pydantic import BaseModel
@@ -21,6 +24,17 @@ logger = logging.getLogger(__name__)
 
 app = FastAPI()
 
+load_dotenv()
+logger.info("Environment variables loaded successfully")
+
+# POSTGRESQL connection details
+POSTGRES_HOST = os.getenv("POSTGRES_HOST")
+POSTGRES_PORT = os.getenv("POSTGRES_PORT")
+POSTGRES_DB = os.getenv("POSTGRES_DB")
+POSTGRES_USER = os.getenv("POSTGRES_USER")
+POSTGRES_PASSWORD = os.getenv("POSTGRES_PASSWORD")
+PROCESS_API_ENDPOINT = os.getenv("PROCESS_API_ENDPOINT")
+
 # Global dictionary to track running crawler tasks
 crawler_tasks: Dict[int, asyncio.Task] = {}
 
@@ -32,14 +46,12 @@ class CrawlerConfig(BaseModel):
 
 async def run_crawler_in_background(crawlerId: int, metadata: dict):
     pool = await asyncpg.create_pool(
-        host="ecom.cataw28sor1c.us-east-1.rds.amazonaws.com",
-        port="5432",
-        database="ecom",
-        user="vietanh21",
-        password="vietanh21",
+        host=POSTGRES_HOST,
+        port=POSTGRES_PORT,
+        database=POSTGRES_DB,
+        user=POSTGRES_USER,
+        password=POSTGRES_PASSWORD,
     )
-
-    process_api_endpoint = "http://54.90.84.111:8010"
 
     try:
         if metadata["engine"] == "playwright-crawler":
@@ -51,7 +63,7 @@ async def run_crawler_in_background(crawlerId: int, metadata: dict):
             async with aiohttp.ClientSession() as session:
                 try:
                     async with session.post(
-                        f"{process_api_endpoint}/run-etl-jobs"
+                        f"{PROCESS_API_ENDPOINT}/run-etl-jobs"
                     ) as response:
                         if response.status == 200:
                             api_result = await response.json()
