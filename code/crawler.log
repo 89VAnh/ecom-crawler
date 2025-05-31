@@ -5993,3 +5993,9 @@ b''
 2025-05-28 04:08:12,748 - INFO - ETL job sequence triggered successfully: {'status': 'completed', 'jobs': [{'job_name': 'raw_to_silver', 'status': 'success', 'env': 'DEV'}, {'job_name': 'build_fact_products', 'status': 'success', 'env': 'DEV'}, {'job_name': 'build_fact_histories', 'status': 'success', 'env': 'DEV'}, {'job_name': 'fact_products_to_db', 'status': 'success', 'env': 'DEV'}, {'job_name': 'fact_histories_to_db', 'status': 'success', 'env': 'DEV'}]}
 2025-05-28 04:08:12,749 - INFO - Crawler executed successfully
 2025-05-28 04:08:12,798 - INFO - Successfully saved result to PostgreSQL for crawler 8
+2025-05-29 03:40:02,950 - INFO - Environment variables loaded successfully
+2025-05-29 03:40:02,968 - DEBUG - Using selector: EpollSelector
+2025-05-29 03:40:03,044 - INFO - Environment variables loaded successfully
+2025-05-29 03:49:16,434 - INFO - Environment variables loaded successfully
+2025-05-29 03:49:16,445 - DEBUG - Using selector: EpollSelector
+2025-05-29 03:49:16,484 - INFO - Environment variables loaded successfully
